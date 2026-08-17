@@ -1,22 +1,9 @@
-# Requisitos
+# Descrição do Problema e Solução
 
-##Requisitos Funcionais
+## Problema 
 
-O sistema deve permitir que clientes e administradores da confeitaria façam cadastro e login.
+Confeiteiras e pequenas empresas de bolos personalizados enfrentam um grande desafio no atendimento do dia a dia. Grande parte do tempo é perdida respondendo mensagens no WhatsApp para calcular orçamentos, tirar dúvidas sobre tamanhos, combinações de recheios e datas disponíveis. Esse processo manual acaba gerando atrasos no atendimento e até erros na hora de anotar os pedidos.
 
-O sistema deve disponibilizar uma tela interativa para o cliente escolher o tamanho, tipo de massa, recheios e adicionais do bolo.
+## Solução 
 
-O sistema deve calcular o valor total do pedido e a estimativa de fatias automaticamente conforme as escolhas do cliente.
-
-O sistema deve permitir que o cliente selecione a data e o horário desejados para a retirada ou entrega.
-
-O sistema deve oferecer um painel para a confeiteira acompanhar o status de cada pedido, como Pendente, Em Produção e Concluído.
-
-
-## Requisitos Não Funcionais
-
-O sistema deve ter um visual simples e funcionar bem em telas de celulares e computadores.
-
-O sistema deve atualizar o valor total do orçamento instantaneamente a cada opção selecionada.
-
-O sistema deve armazenar os dados dos clientes e o histórico de pedidos com segurança.
+Para resolver esse problema, a proposta deste projeto é desenvolver uma plataforma web simples e intuitiva para encomendas de bolos. Através dela, o próprio cliente consegue montar o bolo desejado escolhendo o tamanho, os recheios e a decoração, vendo o valor ser atualizado na hora e já agendando a data de entrega de forma prática.
