@@ -1,6 +1,6 @@
 # Requisitos
 
-##Requisitos Funcionais
+## Requisitos Funcionais
 
 O sistema deve permitir que clientes e administradores da confeitaria façam cadastro e login.
 
