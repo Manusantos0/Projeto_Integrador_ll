@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Doce Encomenda — Bolos Personalizados</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FBF2E4;
+    --bg-panel: #FFFFFF;
+    --ink: #2E1A12;
+    --ink-soft: #7A6656;
+    --line: #E7D9C4;
+    --berry: #C6416A;
+    --berry-dark: #A22E52;
+    --caramel: #C97C3D;
+    --mint: #6E8F5C;
+    --pendente: #C97C3D;
+    --producao: #3E7CB1;
+    --concluido: #6E8F5C;
+    --shadow: 0 12px 28px rgba(46, 26, 18, 0.10);
+    --radius: 18px;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', system-ui, sans-serif;
+    line-height: 1.5;
+  }
+  h1, h2, h3 { font-family: 'Fraunces', Georgia, serif; margin: 0; }
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 18px clamp(16px, 4vw, 40px);
+    border-bottom: 1px solid var(--line);
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand-mark {
+    width: 40px; height: 40px; border-radius: 50%;
+    background: linear-gradient(160deg, var(--berry), var(--caramel));
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
+  }
+  .brand h1 { font-size: 1.25rem; font-weight: 600; }
+  .brand span { display: block; font-size: 0.78rem; color: var(--ink-soft); font-weight: 400; }
+  .tabs { display: flex; gap: 4px; background: var(--bg-panel); border: 1px solid var(--line); border-radius: 999px; padding: 4px; }
+  .tab-btn {
+    border: none; background: transparent; color: var(--ink-soft);
+    padding: 9px 18px; border-radius: 999px; font-weight: 600; font-size: 0.88rem;
+    cursor: pointer; font-family: inherit;
+  }
+  .tab-btn.active { background: var(--berry); color: white; }
+  main { max-width: 1120px; margin: 0 auto; padding: clamp(20px, 4vw, 40px); }
+  .view { display: none; }
+  .view.active { display: block; }
+  .order-grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 28px;
+    align-items: start;
+  }
+  @media (max-width: 760px) { .order-grid { grid-template-columns: 1fr; } }
+  .card {
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    padding: clamp(18px, 3vw, 28px);
+    box-shadow: var(--shadow);
+  }
+  .card + .card { margin-top: 20px; }
+  .card h2 { font-size: 1.15rem; margin-bottom: 4px; }
+  .card .hint { color: var(--ink-soft); font-size: 0.86rem; margin-bottom: 16px; }
+  label.field { display: block; margin-bottom: 14px; }
+  label.field span { display: block; font-size: 0.82rem; font-weight: 600; margin-bottom: 6px; color: var(--ink-soft); }
+  input[type=text], input[type=tel], input[type=date], input[type=time], select {
+    width: 100%; padding: 11px 12px; border-radius: 10px; border: 1px solid var(--line);
+    background: var(--bg); color: var(--ink); font-family: inherit; font-size: 0.95rem;
+  }
+  input:focus, select:focus, button:focus-visible, .chip:focus-visible { outline: 2px solid var(--berry); outline-offset: 2px; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  @media (max-width: 480px) { .row2 { grid-template-columns: 1fr; } }
+  .size-options { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  @media (max-width: 480px) { .size-options { grid-template-columns: 1fr; } }
+  .size-card {
+    border: 1.5px solid var(--line); border-radius: 12px; padding: 12px; cursor: pointer;
+    text-align: left; background: var(--bg); color: var(--ink); font-family: inherit;
+  }
+  .size-card b { display: block; font-family: 'Fraunces', serif; font-size: 1.05rem; }
+  .size-card small { color: var(--ink-soft); display: block; margin-top: 2px; font-size: 0.78rem; }
+  .size-card.selected { border-color: var(--berry); background: #f7e3e9; }
+  .chip-group { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip {
+    border: 1.5px solid var(--line); background: var(--bg); color: var(--ink);
+    padding: 8px 14px; border-radius: 999px; cursor: pointer; font-size: 0.85rem; font-family: inherit;
+  }
+  .chip.selected { border-color: var(--mint); background: #e8efe3; font-weight: 600; }
+  .receipt { position: sticky; top: 20px; }
+  .receipt ul { list-style: none; margin: 0; padding: 0; }
+  .receipt li {
+    display: flex; justify-content: space-between; gap: 8px;
+    padding: 8px 0; border-bottom: 1px dashed var(--line); font-size: 0.9rem;
+  }
+  .receipt li.empty { color: var(--ink-soft); font-style: italic; border-bottom: none; }
+  .receipt .total-row {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-top: 14px; padding-top: 14px; border-top: 2px solid var(--ink);
+  }
+  .receipt .total-row b { font-family: 'Fraunces', serif; font-size: 1.6rem; }
+  .fatias-note { color: var(--ink-soft); font-size: 0.82rem; margin-top: 4px; }
+  button.primary {
+    width: 100%; margin-top: 18px; background: var(--berry); color: white; border: none;
+    padding: 13px; border-radius: 12px; font-weight: 700; font-size: 0.95rem; cursor: pointer;
+    font-family: inherit;
+  }
+  button.primary:hover { background: var(--berry-dark); }
+  button.primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .msg { margin-top: 10px; font-size: 0.85rem; padding: 10px 12px; border-radius: 10px; }
+  .msg.ok { background: #e8efe3; color: var(--mint); }
+  .msg.err { background: #f7e3e9; color: var(--berry-dark); }
+  .filter-row { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+  .pedido-card {
+    border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; margin-bottom: 12px;
+    background: var(--bg-panel); box-shadow: var(--shadow);
+  }
+  .pedido-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; flex-wrap: wrap; }
+  .pedido-top h3 { font-size: 1.02rem; }
+  .pedido-meta { color: var(--ink-soft); font-size: 0.82rem; margin-top: 2px; }
+  .status-badge {
+    padding: 5px 12px; border-radius: 999px; font-size: 0.76rem; font-weight: 700;
+    color: white; white-space: nowrap;
+  }
+  .pedido-detalhes { margin-top: 10px; font-size: 0.88rem; color: var(--ink-soft); }
+  .pedido-actions { display: flex; gap: 8px; margin-top: 12px; flex-wrap: wrap; }
+  .pedido-actions button {
+    border: 1px solid var(--line); background: var(--bg); color: var(--ink);
+    padding: 7px 14px; border-radius: 9px; cursor: pointer; font-size: 0.8rem; font-family: inherit; font-weight: 600;
+  }
+  .pedido-actions button.danger { color: var(--berry-dark); border-color: var(--berry); }
+  .empty-state { text-align: center; padding: 40px 20px; color: var(--ink-soft); }
+  .empty-state .big { font-size: 2.2rem; margin-bottom: 8px; }
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="brand">
+    <div class="brand-mark">🎂</div>
+    <h1>Doce Encomenda<span>Sistema de Encomendas de Bolos</span></h1>
+  </div>
+  <div class="tabs">
+    <button class="tab-btn active" data-view="cliente">Fazer pedido</button>
+    <button class="tab-btn" data-view="painel">Painel da confeiteira</button>
+  </div>
+</div>
+<main>
+  <section class="view active" id="view-cliente">
+    <div class="order-grid">
+      <div>
+        <div class="card">
+          <h2>Seus dados</h2>
+          <p class="hint">Para confirmarmos seu pedido e avisar quando estiver pronto.</p>
+          <div class="row2">
+            <label class="field"><span>Nome</span><input type="text" id="c-nome" placeholder="Seu nome"></label>
+            <label class="field"><span>WhatsApp</span><input type="tel" id="c-telefone" placeholder="(00) 00000-0000"></label>
+          </div>
+        </div>
+        <div class="card">
+          <h2>Tamanho do bolo</h2>
+          <p class="hint">Escolha o tamanho conforme o número de convidados.</p>
+          <div class="size-options" id="tamanhos"></div>
+        </div>
+        <div class="card">
+          <h2>Massa</h2>
+          <div class="chip-group" id="massas"></div>
+        </div>
+        <div class="card">
+          <h2>Recheios</h2>
+          <p class="hint">Selecione um ou mais recheios.</p>
+          <div class="chip-group" id="recheios"></div>
+        </div>
+        <div class="card">
+          <h2>Adicionais</h2>
+          <div class="chip-group" id="adicionais"></div>
+        </div>
+        <div class="card">
+          <h2>Entrega</h2>
+          <div class="row2">
+            <label class="field"><span>Data</span><input type="date" id="c-data"></label>
+            <label class="field"><span>Horário</span><input type="time" id="c-hora"></label>
+          </div>
+          <div class="chip-group" id="entrega-tipo"></div>
+        </div>
+      </div>
+      <div class="receipt card">
+        <h2>Resumo do pedido</h2>
+        <ul id="resumo-lista"></ul>
+        <div class="total-row">
+          <span>Total</span>
+          <b id="total-valor">R$ 0,00</b>
+        </div>
+        <p class="fatias-note" id="fatias-estimadas"></p>
+        <button class="primary" id="btn-confirmar">Confirmar encomenda</button>
+        <div id="confirm-msg"></div>
+      </div>
+    </div>
+  </section>
+  <section class="view" id="view-painel">
+    <div class="card">
+      <h2>Pedidos recebidos</h2>
+      <p class="hint">Acompanhe e atualize o andamento de cada encomenda.</p>
+      <div class="filter-row" id="filtros"></div>
+      <div id="lista-pedidos"></div>
+    </div>
+  </section>
+</main>
+<script>
+(function () {
+  "use strict";
+  var STORAGE_KEY = "doce_encomenda_pedidos_v1";
+  var TAMANHOS = [
+    { id: "p", label: "Pequeno", fatias: "6–8 fatias", preco: 45 },
+    { id: "m", label: "Médio", fatias: "10–12 fatias", preco: 65 },
+    { id: "g", label: "Grande", fatias: "16–20 fatias", preco: 95 }
+  ];
+  var MASSAS = [
+    { id: "baunilha", label: "Baunilha", preco: 0 },
+    { id: "chocolate", label: "Chocolate", preco: 0 },
+    { id: "cenoura", label: "Cenoura", preco: 0 },
+    { id: "redvelvet", label: "Red Velvet", preco: 10 }
+  ];
+  var RECHEIOS = [
+    { id: "brigadeiro", label: "Brigadeiro", preco: 8 },
+    { id: "ninho", label: "Ninho com morango", preco: 10 },
+    { id: "docedeleite", label: "Doce de leite", preco: 8 },
+    { id: "nutella", label: "Nutella", preco: 14 },
+    { id: "limao", label: "Limão", preco: 8 }
+  ];
+  var ADICIONAIS = [
+    { id: "chantilly", label: "Chantilly extra", preco: 6 },
+    { id: "topo", label: "Topo personalizado", preco: 15 },
+    { id: "granulado", label: "Granulado colorido", preco: 4 },
+    { id: "frutas", label: "Frutas frescas", preco: 12 }
+  ];
+  var ENTREGA = [
+    { id: "retirada", label: "Retirada no local", preco: 0 },
+    { id: "entrega", label: "Entrega", preco: 15 }
+  ];
+  var STATUS_FLOW = ["Pendente", "Em Produção", "Concluído"];
+  var STATUS_COLOR = { "Pendente": "var(--pendente)", "Em Produção": "var(--producao)", "Concluído": "var(--concluido)" };
+  var state = { tamanho: null, massa: null, recheios: [], adicionais: [], entrega: "retirada" };
+  function fmt(v) { return "R$ " + v.toFixed(2).replace(".", ","); }
+  function safeGet(key) {
+    try { var raw = localStorage.getItem(key); return raw ? JSON.parse(raw) : []; }
+    catch (e) { return []; }
+  }
+  function safeSet(key, value) {
+    try { localStorage.setItem(key, JSON.stringify(value)); return true; }
+    catch (e) { return false; }
+  }
+  function renderTamanhos() {
+    var box = document.getElementById("tamanhos");
+    box.innerHTML = "";
+    TAMANHOS.forEach(function (t) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "size-card" + (state.tamanho === t.id ? " selected" : "");
+      btn.innerHTML = "<b>" + t.label + "</b><small>" + t.fatias + "</small><small>" + fmt(t.preco) + "</small>";
+      btn.addEventListener("click", function () { state.tamanho = t.id; renderTamanhos(); renderResumo(); });
+      box.appendChild(btn);
+    });
+  }
+  function renderChipGroup(containerId, options, selectedRef, multi) {
+    var box = document.getElementById(containerId);
+    box.innerHTML = "";
+    options.forEach(function (opt) {
+      var chip = document.createElement("button");
+      chip.type = "button";
+      var isSelected = multi ? selectedRef.indexOf(opt.id) !== -1 : selectedRef.value === opt.id;
+      chip.className = "chip" + (isSelected ? " selected" : "");
+      chip.textContent = opt.label + (opt.preco > 0 ? " (+" + fmt(opt.preco) + ")" : "");
+      chip.addEventListener("click", function () {
+        if (multi) {
+          var idx = selectedRef.indexOf(opt.id);
+          if (idx === -1) { selectedRef.push(opt.id); } else { selectedRef.splice(idx, 1); }
+        } else { selectedRef.value = opt.id; }
+        renderAll();
+      });
+      box.appendChild(chip);
+    });
+  }
+  function renderAll() {
+    renderTamanhos();
+    renderChipGroup("massas", MASSAS, { get value() { return state.massa; }, set value(v) { state.massa = v; } }, false);
+    renderChipGroup("recheios", RECHEIOS, state.recheios, true);
+    renderChipGroup("adicionais", ADICIONAIS, state.adicionais, true);
+    renderChipGroup("entrega-tipo", ENTREGA, { get value() { return state.entrega; }, set value(v) { state.entrega = v; } }, false);
+    renderResumo();
+  }
+  function calcularTotal() {
+    var total = 0; var linhas = [];
+    var tamanhoObj = TAMANHOS.filter(function (t) { return t.id === state.tamanho; })[0];
+    if (tamanhoObj) { total += tamanhoObj.preco; linhas.push([tamanhoObj.label + " (base)", tamanhoObj.preco]); }
+    var massaObj = MASSAS.filter(function (m) { return m.id === state.massa; })[0];
+    if (massaObj && massaObj.preco > 0) { total += massaObj.preco; linhas.push(["Massa " + massaObj.label, massaObj.preco]); }
+    state.recheios.forEach(function (id) {
+      var r = RECHEIOS.filter(function (x) { return x.id === id; })[0];
+      if (r) { total += r.preco; linhas.push(["Recheio: " + r.label, r.preco]); }
+    });
+    state.adicionais.forEach(function (id) {
+      var a = ADICIONAIS.filter(function (x) { return x.id === id; })[0];
+      if (a) { total += a.preco; linhas.push([a.label, a.preco]); }
+    });
+    var entregaObj = ENTREGA.filter(function (e) { return e.id === state.entrega; })[0];
+    if (entregaObj && entregaObj.preco > 0) { total += entregaObj.preco; linhas.push([entregaObj.label, entregaObj.preco]); }
+    return { total: total, linhas: linhas, tamanhoObj: tamanhoObj, massaObj: massaObj };
+  }
+  function renderResumo() {
+    var calc = calcularTotal();
+    var lista = document.getElementById("resumo-lista");
+    lista.innerHTML = "";
+    if (calc.linhas.length === 0) {
+      var li = document.createElement("li");
+      li.className = "empty";
+      li.textContent = "Escolha as opções ao lado para ver o valor.";
+      lista.appendChild(li);
+    } else {
+      calc.linhas.forEach(function (item) {
+        var li = document.createElement("li");
+        li.innerHTML = "<span>" + item[0] + "</span><span>" + fmt(item[1]) + "</span>";
+        lista.appendChild(li);
+      });
+    }
+    document.getElementById("total-valor").textContent = fmt(calc.total);
+    document.getElementById("fatias-estimadas").textContent = calc.tamanhoObj ? "Estimativa: " + calc.tamanhoObj.fatias : "";
+    var pronto = state.tamanho && state.massa;
+    document.getElementById("btn-confirmar").disabled = !pronto;
+  }
+  function limparFormulario() {
+    state = { tamanho: null, massa: null, recheios: [], adicionais: [], entrega: "retirada" };
+    document.getElementById("c-nome").value = "";
+    document.getElementById("c-telefone").value = "";
+    document.getElementById("c-data").value = "";
+    document.getElementById("c-hora").value = "";
+    renderAll();
+  }
+  document.getElementById("btn-confirmar").addEventListener("click", function () {
+    var nome = document.getElementById("c-nome").value.trim();
+    var telefone = document.getElementById("c-telefone").value.trim();
+    var data = document.getElementById("c-data").value;
+    var hora = document.getElementById("c-hora").value;
+    var msgBox = document.getElementById("confirm-msg");
+    if (!nome || !telefone) { msgBox.innerHTML = '<div class="msg err">Preencha nome e WhatsApp para confirmar.</div>'; return; }
+    if (!state.tamanho || !state.massa) { msgBox.innerHTML = '<div class="msg err">Escolha o tamanho e a massa do bolo.</div>'; return; }
+    var calc = calcularTotal();
+    var pedido = {
+      id: "PED-" + Date.now(), nome: nome, telefone: telefone, data: data, hora: hora,
+      tamanho: calc.tamanhoObj ? calc.tamanhoObj.label : "",
+      massa: calc.massaObj ? calc.massaObj.label : MASSAS.filter(function(m){return m.id===state.massa;})[0].label,
+      recheios: state.recheios.map(function (id) { return RECHEIOS.filter(function (r) { return r.id === id; })[0].label; }),
+      adicionais: state.adicionais.map(function (id) { return ADICIONAIS.filter(function (a) { return a.id === id; })[0].label; }),
+      entrega: ENTREGA.filter(function (e) { return e.id === state.entrega; })[0].label,
+      total: calc.total, status: "Pendente", criadoEm: new Date().toISOString()
+    };
+    var pedidos = safeGet(STORAGE_KEY);
+    pedidos.unshift(pedido);
+    var saved = safeSet(STORAGE_KEY, pedidos);
+    if (saved) { msgBox.innerHTML = '<div class="msg ok">Pedido enviado com sucesso! Acompanhe no painel da confeiteira.</div>'; limparFormulario(); }
+    else { msgBox.innerHTML = '<div class="msg err">Não foi possível salvar o pedido neste navegador.</div>'; }
+  });
+  var filtroAtual = "Todos";
+  function renderFiltros() {
+    var box = document.getElementById("filtros");
+    box.innerHTML = "";
+    ["Todos"].concat(STATUS_FLOW).forEach(function (f) {
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.className = "chip" + (filtroAtual === f ? " selected" : "");
+      btn.textContent = f;
+      btn.addEventListener("click", function () { filtroAtual = f; renderPainel(); });
+      box.appendChild(btn);
+    });
+  }
+  function renderPainel() {
+    renderFiltros();
+    var pedidos = safeGet(STORAGE_KEY);
+    var lista = document.getElementById("lista-pedidos");
+    lista.innerHTML = "";
+    var filtrados = filtroAtual === "Todos" ? pedidos : pedidos.filter(function (p) { return p.status === filtroAtual; });
+    if (filtrados.length === 0) { lista.innerHTML = '<div class="empty-state"><div class="big">🧁</div>Nenhum pedido por aqui ainda.</div>'; return; }
+    filtrados.forEach(function (p) {
+      var div = document.createElement("div");
+      div.className = "pedido-card";
+      var detalhes = [
+        p.tamanho + " · " + p.massa,
+        p.recheios.length ? "Recheios: " + p.recheios.join(", ") : "",
+        p.adicionais.length ? "Adicionais: " + p.adicionais.join(", ") : "",
+        p.entrega + (p.data ? " · " + p.data : "") + (p.hora ? " às " + p.hora : "")
+      ].filter(Boolean).join(" · ");
+      var actionsHtml = "";
+      var statusIdx = STATUS_FLOW.indexOf(p.status);
+      if (statusIdx < STATUS_FLOW.length - 1) { actionsHtml += '<button data-action="avancar" data-id="' + p.id + '">Avançar para "' + STATUS_FLOW[statusIdx + 1] + '"</button>'; }
+      actionsHtml += '<button class="danger" data-action="remover" data-id="' + p.id + '">Remover</button>';
+      div.innerHTML =
+        '<div class="pedido-top">' +
+          '<div><h3>' + p.nome + '</h3><div class="pedido-meta">' + p.telefone + ' · ' + fmt(p.total) + '</div></div>' +
+          '<span class="status-badge" style="background:' + STATUS_COLOR[p.status] + '">' + p.status + '</span>' +
+        '</div>' +
+        '<div class="pedido-detalhes">' + detalhes + '</div>' +
+        '<div class="pedido-actions">' + actionsHtml + '</div>';
+      lista.appendChild(div);
+    });
+    lista.querySelectorAll('[data-action="avancar"]').forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var pedidos = safeGet(STORAGE_KEY);
+        var alvo = pedidos.filter(function (p) { return p.id === btn.dataset.id; })[0];
+        if (alvo) {
+          var idx = STATUS_FLOW.indexOf(alvo.status);
+          if (idx < STATUS_FLOW.length - 1) { alvo.status = STATUS_FLOW[idx + 1]; }
+          safeSet(STORAGE_KEY, pedidos);
+          renderPainel();
+        }
+      });
+    });
+    lista.querySelectorAll('[data-action="remover"]').forEach(function (btn) {
+      btn.addEventListener("click", function () {
+        var pedidos = safeGet(STORAGE_KEY).filter(function (p) { return p.id !== btn.dataset.id; });
+        safeSet(STORAGE_KEY, pedidos);
+        renderPainel();
+      });
+    });
+  }
+  document.querySelectorAll(".tab-btn").forEach(function (btn) {
+    btn.addEventListener("click", function () {
+      document.querySelectorAll(".tab-btn").forEach(function (b) { b.classList.remove("active"); });
+      document.querySelectorAll(".view").forEach(function (v) { v.classList.remove("active"); });
+      btn.classList.add("active");
+      document.getElementById("view-" + btn.dataset.view).classList.add("active");
+      if (btn.dataset.view === "painel") { renderPainel(); }
+    });
+  });
+  renderAll();
+})();
+</script>
+</body>
+</html>
