@@ -20,10 +20,3 @@ O sistema deve ter um visual simples e funcionar bem em telas de celulares e com
 O sistema deve atualizar o valor total do orçamento instantaneamente a cada opção selecionada.
 
 O sistema deve armazenar os dados dos clientes e o histórico de pedidos com segurança.
-## Como executar
-Abra o arquivo `src/encomendas-bolos.html` em qualquer navegador.
-
-## Resultados alcançados
-- Cálculo de valor em tempo real
-- Painel da confeiteira com status Pendente/Em Produção/Concluído
-- Validação com usuário real (ver /docs/testes.md)
